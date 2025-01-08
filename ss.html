@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gandalf_the_Gimp Slot Machine</title>
+    <style>
+        /* Animated Blue Border */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #ADD8E6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .slot-machine-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 5px solid #007BFF;
+            border-radius: 20px;
+            padding: 20px;
+            width: 500px;
+            text-align: center;
+            position: relative;
+            animation: borderAnimation 5s infinite alternate;
+        }
+
+        @keyframes borderAnimation {
+            0% {
+                border-color: #1E90FF;
+            }
+            50% {
+                border-color: #00BFFF;
+            }
+            100% {
+                border-color: #1E90FF;
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        /* Slot Machine UI */
+        .slots {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .slot {
+            background-color: #000;
+            color: white;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            border-radius: 10px;
+        }
+
+        .handle-btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            font-size: 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .handle-btn:active {
+            background-color: #005F8F;
+        }
+
+        .balance {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .leaderboard-container {
+            margin-top: 30px;
+            background-color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .leaderboard-container h2 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard {
+            list-style-type: none;
+            padding: 0;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .leaderboard li {
+            padding: 10px;
+            border-bottom: 1px solid #555;
+        }
+
+        .leaderboard li:last-child {
+            border-bottom: none;
+        }
+
+        .twitch-link {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+
+        .twitch-link a {
+            color: #6441a5;
+            text-decoration: none;
+        }
+
+        .twitch-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* PayPal Button */
+        .paypal-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #0070ba;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .paypal-btn:hover {
+            background-color: #005a8d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slot-machine-container">
+        <h1>Gandalf_the_Gimp Slot Machine</h1>
+        
+        <!-- Slot Machine Slots -->
+        <div class="slots">
+            <div class="slot" id="slot1">🍒</div>
+            <div class="slot" id="slot2">🍒</div>
+            <div class="slot" id="slot3">🍒</div>
+        </div>
+
+        <!-- Spin Button -->
+        <button class="handle-btn" onclick="spin()">Pull the Handle</button>
+
+        <!-- Balance Display -->
+        <div class="balance">Balance: $<span id="balance">0</span></div>
+
+        <!-- Restart Button -->
+        <button class="handle-btn" onclick="restartGame()">Restart Game</button>
+
+        <!-- PayPal Button -->
+        <div class="paypal-btn">
+            <p>Support via PayPal:</p>
+            <button onclick="window.location.href=''">Donate $5</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div class="leaderboard-container">
+        <h2>Leaderboard</h2>
+        <ul class="leaderboard" id="leaderboard">
+            <!-- Leaderboard Entries -->
+        </ul>
+    </div>
+
+    <script>
+        // Slot Machine Game Variables
+        let balance = 0;
+        const symbols = ['🍒', '🍋', '🍇', '🍊', '🍉', '🍍', '🍒'];
+        const playerNames = ['GandalfFan1', 'GandalfFan2', 'GandalfFan3', 'GandalfFan4', 'GandalfFan5'];
+
+        // Function to Spin the Slot Machine
+        function spin() {
+            if (balance < 1) {
+                // Don't allow spinning without at least 1 coin
+                return;
+            }
+
+            // Deduct coin
+            balance -= 1;
+            document.getElementById('balance').innerText = balance;
+
+            // Spin the Slots
+            let slot1 = symbols[Math.floor(Math.random() * symbols.length)];
+            let slot2 = symbols[Math.floor(Math.random() * symbols.length)];
+            let slot3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+            document.getElementById('slot1').innerText = slot1;
+            document.getElementById('slot2').innerText = slot2;
+            document.getElementById('slot3').innerText = slot3;
+
+            // Check for winning
+            if (slot1 === slot2 && slot2 === slot3) {
+                balance += 10; // Add 10 coins to balance if win
+                document.getElementById('balance').innerText = balance;
+                updateLeaderboard();
+            } else {
+                resetLeaderboard();
+            }
+        }
+
+        // Function to Insert Coin
+        function insertCoin() {
+            if (balance >= 1) {
+                // Do nothing if balance is already greater than or equal to 1
+                return;
+            }
+            balance += 1;
+            document.getElementById('balance').innerText = balance;
+        }
+
+        // Function to Update Leaderboard with Twitch Fan Names
+        function updateLeaderboard() {
+            let leaderboard = document.getElementById('leaderboard');
+            let randomPlayer = playerNames[Math.floor(Math.random() * playerNames.length)];
+            let newPlayer = document.createElement('li');
+            newPlayer.textContent = randomPlayer + ": " + balance + " Coins";
+            leaderboard.appendChild(newPlayer);
+        }
+
+        // Function to Reset Leaderboard
+        function resetLeaderboard() {
+            let leaderboard = document.getElementById('leaderboard');
+            leaderboard.innerHTML = ''; // Clear leaderboard
+        }
+
+        // Restart the Game
+        function restartGame() {
+            balance = 0;
+            document.getElementById('balance').innerText = balance;
+            resetLeaderboard();
+            insertCoin(); // Automatically insert a coin to start the game
+        }
+
+        // Insert coin automatically for testing
+        insertCoin(); // You can call this if you want to start with coins already inserted
+    </script>
+
+</body>
+</html>
